@@ -51,5 +51,10 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
+### 6. Run the Server
+```basg
+python manage.py runserver
+```
+
 
 
