@@ -1,38 +1,62 @@
-# Django
+### Python ###
+*.py[cod]
+__pycache__/
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+### Django ###
 *.log
 *.pot
-*.pyc
-__pycache__/
+*.sqlite3
+*.sqlite3-journal
 local_settings.py
 db.sqlite3
+
+# Media và Static
 media/
+staticfiles/
+!staticfiles/.keep  # Giữ thư mục staticfiles nhưng bỏ nội dung
 
-# Virtual environment
-venv/
+### Environments ###
+.env
+.venv/
 env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+pythonenv/
 
-# IDE
+### IDE ###
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
 
-# Environment files
-.env
-.env/*
-
-# Database
-*.db
-
-# macOS
+### System ###
 .DS_Store
+Thumbs.db
+desktop.ini
 
-# Node.js
-node_modules/
-
-# Coverage
+### Testing ###
 .coverage
 htmlcov/
-
-# Static files at production
-staticfiles/
+.pytest_cache/
