@@ -1,0 +1,38 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
+media/
+
+# Virtual environment
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env/*
+
+# Database
+*.db
+
+# macOS
+.DS_Store
+
+# Node.js
+node_modules/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Static files at production
+staticfiles/
