@@ -24,6 +24,7 @@ source venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+Lưu ý: Nếu gặp lỗi, chạy pip install --upgrade pip để cập nhật pip.
 ### 4. Environment Configuration
 Create and setting .env file with your secret information
 ```bash
@@ -45,14 +46,15 @@ EMAIL_HOST_USER=your-email@gmail.com
 EMAIL_HOST_PASSWORD=your-app-password
 ```
 
-### 5. Database Setup
+### 5. Database Setup AND Create SuperUser
 ```bash
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createsuperuser
 ```
 
 ### 6. Run the Server
-```basg
+```bash
 python manage.py runserver
 ```
 
