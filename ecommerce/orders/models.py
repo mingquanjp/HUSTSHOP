@@ -105,6 +105,10 @@ class Order(models.Model):
     )
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank = True, null=True)
+    first_name = models.CharField(max_length=50,default='')
+    last_name = models.CharField(max_length=50,default='')
+    phone = models.CharField(max_length=15,default='')
+    email = models.EmailField(max_length=50, default='')
     shipping_address = models.TextField()
     order_number = models.CharField(max_length=100, unique=True)
     order_discount = models.DecimalField(
