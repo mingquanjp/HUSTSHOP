@@ -43,7 +43,7 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200, unique=True)
     description = models.TextField(max_length=500, blank=True)
     image = models.ImageField(upload_to='uploads/products', blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.IntegerField(default=0)
     stock = models.PositiveIntegerField()
     is_available = models.BooleanField(default=True)
     star_rated = models.DecimalField(max_digits=5, decimal_places=1, default=0.0)
@@ -87,6 +87,10 @@ class Product(models.Model):
         if reviews['count'] is not None:
             count = int(reviews['count'])
         return count
+
+
+    def formatted_price(self):
+        return f"{self.price:,} VND"
 
 
 

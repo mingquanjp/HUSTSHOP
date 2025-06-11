@@ -37,7 +37,7 @@ def store(request, category_slug=None):
     size_filter = request.GET.getlist('size')
     color_filter = request.GET.getlist('color')
     min_price = request.GET.get('min_price', '0')
-    max_price = request.GET.get('max_price', '2000+')
+    max_price = request.GET.get('max_price', '500000')
     star_filter = request.GET.get('star_rating', '')
 
     # Áp dụng các filters
@@ -63,7 +63,7 @@ def store(request, category_slug=None):
         except (ValueError, TypeError, InvalidOperation):
             pass
 
-    if max_price and max_price != '2000+':
+    if max_price and max_price != '500000':
         try:
             max_price_decimal = Decimal(str(max_price))
             products = products.filter(price__lte=max_price_decimal)
@@ -196,7 +196,7 @@ def search(request):
             except (ValueError, TypeError):
                 pass
 
-        if max_price and max_price not in ['2000+', '']:
+        if max_price and max_price not in ['500000', '']:
             try:
                 products = products.filter(price__lte=Decimal(max_price))
             except (ValueError, TypeError):
@@ -229,7 +229,7 @@ def search(request):
         'selected_sizes': size_filter,
         'selected_colors': color_filter,
         'current_min_price': min_price or '0',
-        'current_max_price': max_price or '2000+',
+        'current_max_price': max_price or '500000',
         'current_star_rating': star_filter or '',
     }
     return render(request, 'store.html', context)

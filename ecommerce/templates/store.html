@@ -97,22 +97,23 @@
                                         <div class="form-group col-md-6">
                                             <label>Min</label>
                                             <select class="form-control" name="min_price">
-                                                <option value="0" {% if current_min_price == '0' %}selected{% endif %}>$0</option>
-                                                <option value="50" {% if current_min_price == '50' %}selected{% endif %}>$50</option>
-                                                <option value="100" {% if current_min_price == '100' %}selected{% endif %}>$100</option>
-                                                <option value="200" {% if current_min_price == '200' %}selected{% endif %}>$200</option>
-                                                <option value="500" {% if current_min_price == '500' %}selected{% endif %}>$500</option>
+                                                <option value="0" {% if current_min_price == '0' %}selected{% endif %}>0VND</option>
+                                                <option value="50000" {% if current_min_price == '50000' %}selected{% endif %}>50.000VND</option>
+                                                <option value="100000" {% if current_min_price == '100000' %}selected{% endif %}>100.000VND</option>
+                                                <option value="200000" {% if current_min_price == '200000' %}selected{% endif %}>200.000VND</option>
+                                                <option value="300000" {% if current_min_price == '300000' %}selected{% endif %}>300.000VND</option>
                                             </select>
                                         </div>
                                         <div class="form-group col-md-6">
                                             <label>Max</label>
                                             <select class="form-control" name="max_price">
-                                                <option value="50" {% if current_max_price == '50' %}selected{% endif %}>$50</option>
-                                                <option value="100" {% if current_max_price == '100' %}selected{% endif %}>$100</option>
-                                                <option value="200" {% if current_max_price == '200' %}selected{% endif %}>$200</option>
-                                                <option value="500" {% if current_max_price == '500' %}selected{% endif %}>$500</option>
-                                                <option value="1000" {% if current_max_price == '1000' %}selected{% endif %}>$1000</option>
-                                                <option value="2000+" {% if current_max_price == '2000+' %}selected{% endif %}>$2000+</option>
+
+                                                <option value="100000" {% if current_max_price == '100000' %}selected{% endif %}>100.000VND</option>
+                                                <option value="200000" {% if current_max_price == '200000' %}selected{% endif %}>200.000VND</option>
+                                                <option value="300000" {% if current_max_price == '300000' %}selected{% endif %}>300.000VND</option>
+                                                <option value="400000" {% if current_max_price == '400000' %}selected{% endif %}>400.000VND</option>
+                                                <option value="500000" {% if current_max_price == '500000' %}selected{% endif %}>500.000VND</option>
+
                                             </select>
                                         </div>
                                     </div>
@@ -168,7 +169,7 @@
                                 <div class="fix-height">
                                     <a href="{{ product.get_url }}" class="title">{{ product.name }}</a>
                                     <div class="price-wrap mt-2">
-                                        <span class="price">${{ product.price }}</span>
+                                        <span class="price">{{ product.price }}VND</span>
                                     </div>
                                 </div>
                                 <a href="{{ product.get_url }}" class="btn btn-block btn-primary">View detail</a>
