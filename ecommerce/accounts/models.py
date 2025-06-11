@@ -40,6 +40,11 @@ class Account(AbstractBaseUser, PermissionsMixin):
         ('O', 'Other'),
     )
 
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$',
+        message="Phone number must be in format: '+999999999'. Up to 15 digits allowed."
+    )
+
     # Thông tin đăng nhập
     email = models.EmailField(unique=True, verbose_name='Email')
     username = models.CharField(max_length=50, unique=True, verbose_name='Username')
@@ -47,6 +52,12 @@ class Account(AbstractBaseUser, PermissionsMixin):
     # Thông tin cá nhân
     first_name = models.CharField(max_length=50, verbose_name='First Name')
     last_name = models.CharField(max_length=50, verbose_name='Last Name')
+    phone_number = models.CharField(
+        max_length=17,
+        validators=[phone_regex],
+        blank=True,
+        verbose_name='Phone Number'
+    )
     role = models.PositiveSmallIntegerField(choices=ROLE_CHOICES, default=1, verbose_name='Role')
     dob = models.DateField(null=True, blank=True, verbose_name='Date of Birth')
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, blank=True, verbose_name='Gender')
@@ -77,37 +88,5 @@ class Account(AbstractBaseUser, PermissionsMixin):
     def get_role_name(self):
         return dict(self.ROLE_CHOICES).get(self.role, 'Unknown')
 
-class UserPhone(models.Model):
-    phone_regex = RegexValidator(
-        regex=r'^\+?1?\d{9,15}$',
-        message="Phone number must be in format: '+999999999'. Up to 15 digits allowed."
-    )
-
-    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='phones')
-    phone_number = models.CharField(
-        max_length=17,
-        validators=[phone_regex],
-        verbose_name='Phone Number'
-    )
-    is_primary = models.BooleanField(default=False, verbose_name='Is Primary')
-
-    class Meta:
-        verbose_name = 'User Phone'
-        verbose_name_plural = 'User Phones'
-
-    def __str__(self):
-        return f"{self.phone_number} ({'Primary' if self.is_primary else 'Secondary'})"
-
-class UserEmail(models.Model):
-    user = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='emails')
-    email = models.EmailField(verbose_name='Email Address')
-    is_primary = models.BooleanField(default=False, verbose_name='Is Primary')
-
-    class Meta:
-        verbose_name = 'User Email'
-        verbose_name_plural = 'User Emails'
-
-    def __str__(self):
-        return f"{self.email} ({'Primary' if self.is_primary else 'Secondary'})"
 
 
