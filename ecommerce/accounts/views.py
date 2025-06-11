@@ -18,7 +18,6 @@ from accounts.models import Account
 
 import requests
 
-from accounts.models import UserPhone
 
 
 # Create your views here.
@@ -37,18 +36,11 @@ def register(request):
                 first_name=first_name,
                 last_name=last_name,
                 email=email,
-                username=username
-                , password=password)
+                username=username,
+                 password=password,
+                phone_number=phone_number)
             user.is_active = False
             user.save()
-
-            if phone_number:
-                UserPhone.objects.create(
-                    user=user,
-                    phone_number=phone_number,
-                    is_primary=True
-                )
-
             current_site = get_current_site(request=request)
             mail_subject = 'Activate your blog account.'
             message = render_to_string('active_email.html', {
