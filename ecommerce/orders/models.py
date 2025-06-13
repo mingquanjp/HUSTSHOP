@@ -81,7 +81,7 @@ class Payment(models.Model):
         ('failed', 'Failed')
     )
     PAYMENT_METHOD = (
-        ('Momo', 'Momo'),
+        ('VNPAY', 'VNPAY'),
         ('cash', 'Cash on delivery'),
     )
     user = models.ForeignKey(Account, on_delete=models.CASCADE)
