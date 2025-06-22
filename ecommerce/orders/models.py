@@ -91,6 +91,8 @@ class Payment(models.Model):
     status = models.CharField(max_length=100, choices=PAYMENT_STATUS, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
+
+
     def __str__(self):
         return f"Payment #{self.payment_id} - ({self.status})"
 
