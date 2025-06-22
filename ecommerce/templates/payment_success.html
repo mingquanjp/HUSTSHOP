@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                        </div>
+
+                        <h2 class="text-success mb-3">Thanh toán thành công!</h2>
+                        <p class="lead">Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được xác nhận và sẽ được xử lý sớm nhất.</p>
+
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading">Thông tin đơn hàng</h5>
+                            <hr>
+                            <p class="mb-0">
+                                <strong>Mã đơn hàng:</strong> {{ order.order_number }}<br>
+                                <strong>Tổng tiền:</strong> {{ order.order_total|floatformat:0 }} VNĐ<br>
+                                <strong>Trạng thái:</strong> <span class="badge badge-success">{{ order.order_status }}</span><br>
+                                {% if order.payment %}
+                                <strong>Phương thức thanh toán:</strong> {{ order.payment.payment_method }}<br>
+                                <strong>Mã giao dịch:</strong> {{ order.payment.payment_id }}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-truck"></i> Thông tin giao hàng</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="text-left">
+                                            {{ order.first_name }} {{ order.last_name }}<br>
+                                            {{ order.phone }}<br>
+                                            {{ order.email }}<br>
+                                            {{ order.shipping_address }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-box"></i> Sản phẩm đã đặt</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        {% for item in ordered_products %}
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>{{ item.product.name }} (x{{ item.quantity }})</span>
+                                            <span>{{ item.subtotal|floatformat:0 }} VNĐ</span>
+                                        </div>
+                                        {% endfor %}
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <strong>Tổng cộng:</strong>
+                                            <strong>{{ order.order_total|floatformat:0 }} VNĐ</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="{% url 'store' %}" class="btn btn-primary btn-lg me-2">
+                                <i class="fas fa-shopping-bag"></i> Tiếp tục mua sắm
+                            </a>
+                            <a href="#" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-user"></i> Xem đơn hàng của tôi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

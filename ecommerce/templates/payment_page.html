@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="section-content padding-y">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h4><i class="fas fa-receipt"></i> Thông tin đơn hàng</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Thông tin giao hàng</h6>
+                                <p>
+                                    <strong>{{ order.first_name }} {{ order.last_name }}</strong><br>
+                                    <i class="fas fa-phone"></i> {{ order.phone }}<br>
+                                    <i class="fas fa-envelope"></i> {{ order.email }}<br>
+                                    <i class="fas fa-map-marker-alt"></i> {{ order.shipping_address }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Thông tin đơn hàng</h6>
+                                <p>
+                                    Mã đơn hàng: <strong>{{ order.order_number }}</strong><br>
+                                    Tổng tiền: <strong class="text-danger">{{ order.order_total|floatformat:0 }} VNĐ</strong><br>
+                                    Trạng thái: <span class="badge badge-warning">{{ order.order_status }}</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <h6>Chi tiết sản phẩm</h6>
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <thead class="thead-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for item in cart_items %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ item.product.image.url }}" class="img-thumbnail me-3" style="width: 50px;">
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                {% if item.variations.all %}
+                                                <small class="text-muted">
+                                                    {% for variation in item.variations.all %}
+                                                    {{ variation.variation_category }}: {{ variation.variation_value }}
+                                                    {% endfor %}
+                                                </small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>{{ item.product.price|floatformat:0 }} VNĐ</td>
+                                    <td><strong>{{ item.sub_total|floatformat:0 }} VNĐ</strong></td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card"></i> Chọn phương thức thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+
+                        <!-- VNPAY Payment -->
+                        <div class="payment-method mb-4">
+                            <div class="card border border-primary">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <img src="https://vnpay.vn/assets/images/logo-icon/logo-primary.svg"
+                                             alt="VNPAY" class="img-fluid" style="max-height: 50px;">
+                                    </div>
+                                    <h6 class="card-title">Thanh toán qua VNPAY</h6>
+                                    <p class="card-text text-muted small">
+                                        Thanh toán an toàn qua ngân hàng, thẻ ATM, Visa, MasterCard
+                                    </p>
+                                    <div class="d-grid">
+                                        <a href="#" class="btn btn-primary">
+                                            <i class="fas fa-credit-card"></i>
+                                            Thanh toán {{ order.order_total|floatformat:0 }} VNĐ
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- COD Payment -->
+                        <div class="payment-method mb-4">
+                            <div class="card border">
+                                <div class="card-body text-center">
+                                    <div class="mb-3">
+                                        <i class="fas fa-money-bill-wave text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6 class="card-title">Thanh toán khi nhận hàng (COD)</h6>
+                                    <p class="card-text text-muted small">
+                                        Thanh toán bằng tiền mặt khi nhận hàng
+                                    </p>
+                                    <div class="d-grid">
+                                        <button class="btn btn-success" onclick="alert('Chức năng COD đang phát triển')">
+                                            <i class="fas fa-hand-holding-usd"></i>
+                                            Chọn COD
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="{% url 'checkout' %}" class="btn btn-light">
+                                <i class="fas fa-arrow-left"></i> Quay lại checkout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
