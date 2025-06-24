@@ -18,6 +18,9 @@ from accounts.models import Account
 
 import requests
 
+from orders.models import Order
+
+from orders.models import OrderProduct
 
 
 # Create your views here.
@@ -154,7 +157,51 @@ def activate(request, uidb64, token):
 
 @login_required(login_url="login")
 def dashboard(request):
-    return render(request, "dashboard.html")
+    user = request.user
+    context ={
+        'user':user
+    }
+
+    return render(request, "dashboard.html", context)
+
+#Hien thi danh sach don hang
+@login_required(login_url='login')
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'my_orders.html', context)
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    """Chi tiết đơn hàng"""
+    try:
+        order = Order.objects.get(id=order_id, user=request.user)
+        order_products = OrderProduct.objects.filter(order=order)
+
+        context = {
+            'order': order,
+            'order_products': order_products,
+        }
+        return render(request, 'order_detail.html', context)
+    except Order.DoesNotExist:
+        messages.error(request, 'Đơn hàng không tồn tại')
+        return redirect('my_orders')
+
+@login_required(login_url='login')
+def edit_profile(request):
+
+    return render(request, 'edit_profile.html')
+
+
+@login_required(login_url='login')
+def change_password(request):
+    """Đổi mật khẩu"""
+
+    return render(request, 'change_password.html')
+
+
 
 
 
