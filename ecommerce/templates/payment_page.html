@@ -113,10 +113,11 @@
                                         Thanh toán bằng tiền mặt khi nhận hàng
                                     </p>
                                     <div class="d-grid">
-                                        <button class="btn btn-success" onclick="alert('Chức năng COD đang phát triển')">
+                                        <a href="{% url 'process_cod_payment' order.id %}" class="btn btn-success btn-lg">
                                             <i class="fas fa-hand-holding-usd"></i>
                                             Chọn COD
-                                        </button>
+                                        </a>
+
                                     </div>
                                 </div>
                             </div>

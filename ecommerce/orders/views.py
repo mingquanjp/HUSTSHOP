@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -10,22 +11,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from orders.forms import OrderForm
 from orders.models import Order
-# Thay đổi import này - raven.utils.wsgi có thể không tồn tại
-# from raven.utils.wsgi import get_client_ip
 
 from orders.models import Payment, OrderProduct
 
-
-
-
-def get_client_ip(request):
-    """Lấy IP address của client - Di chuyển function lên đầu"""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR', '127.0.0.1')
-    return ip
+from store.models import Product
 
 
 def _get_cart(request):
@@ -71,36 +60,32 @@ def place_order(request, total=0, quantity=0):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            try:
-                data = Order()
-                data.user = current_user
-                data.first_name = form.cleaned_data['first_name']
-                data.last_name = form.cleaned_data['last_name']
-                data.phone = form.cleaned_data['phone']
-                data.email = form.cleaned_data['email']
-                data.shipping_address = form.cleaned_data['shipping_address']
-                data.order_note = form.cleaned_data['order_note']
-                data.order_total = grand_total
-                data.save()
+            data = Order()
+            data.user = current_user
+            data.first_name = form.cleaned_data['first_name']
+            data.last_name = form.cleaned_data['last_name']
+            data.phone = form.cleaned_data['phone']
+            data.email = form.cleaned_data['email']
+            data.shipping_address = form.cleaned_data['shipping_address']
+            data.order_note = form.cleaned_data['order_note']
+            data.order_total = grand_total
+            data.ip = request.META.get('REMOTE_ADDR')
+            data.save()
 
-                # generate order number
-                year = int(datetime.date.today().strftime("%Y"))
-                date = int(datetime.date.today().strftime("%d"))
-                month = int(datetime.date.today().strftime("%m"))
-                day = datetime.date(year, month, date)
-                current_date = day.strftime("%Y%m%d")
-                order_number = current_date + str(data.id)
-                data.order_number = order_number
-                data.save()
+            # generate order number
+            year = int(datetime.date.today().strftime("%Y"))
+            date = int(datetime.date.today().strftime("%d"))
+            month = int(datetime.date.today().strftime("%m"))
+            day = datetime.date(year, month, date)
+            current_date = day.strftime("%Y%m%d")
+            order_number = current_date + str(data.id)
+            data.order_number = order_number
+            data.save()
 
-                return redirect('payment_page', order_id=data.id)
+            return redirect('payment_page', order_id=data.id)
 
-            except Exception as e:
-                print(f"Error saving order: {e}")
-                messages.error(request, f"Error creating order: {str(e)}")
-                return redirect('checkout')
         else:
-            messages.error(request, "Form validation error")
+            print(f"Error saving order: {e}")
             return redirect('checkout')
 
 
@@ -117,6 +102,73 @@ def payment_page(request, order_id):
         return render(request, 'payment_page.html', context)
     except Order.DoesNotExist:
         messages.error(request, 'Order does not exist')
+        return redirect('checkout')
+
+
+
+@login_required(login_url='login')
+def process_cod_payment(request, order_id):
+    """Xử lý thanh toán COD"""
+    try:
+        order = Order.objects.get(id=order_id, user=request.user, is_ordered=False)
+        cart = _get_cart(request)
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+
+        # Tạo payment record cho COD
+        payment = Payment(
+            user=request.user,
+            payment_id=f"COD_{order.order_number}",
+            payment_method="Cash on Delivery",
+            amount_paid=order.order_total,
+            status="Pending"
+        )
+        payment.save()
+
+        # Cập nhật order
+        order.payment = payment
+        order.is_ordered = True
+        order.order_status = "Accepted"
+        order.save()
+
+        # Tạo OrderProduct cho từng sản phẩm
+        for cart_item in cart_items:
+            # Create OrderProduct first
+            order_product = OrderProduct(
+                order=order,
+                payment=payment,
+                user=request.user,
+                product=cart_item.product,
+                quantity=cart_item.quantity,
+                product_price=cart_item.product.price,
+                ordered=True,
+                subtotal=cart_item.quantity * cart_item.product.price
+            )
+            # Explicitly save to ensure it has an ID
+            order_product.save()
+
+            # Now add variations after the object is definitely saved
+            cart_item_variations = cart_item.variations.all()
+            if cart_item_variations.exists():
+                for variation in cart_item_variations:
+                    order_product.variations.add(variation)
+
+            # Giảm số lượng sản phẩm trong kho
+            product = cart_item.product
+            product.stock -= cart_item.quantity
+            product.save()
+
+        # Xóa cart items
+        CartItem.objects.filter(cart=cart).delete()
+
+        messages.success(request, 'Đặt hàng thành công! Bạn sẽ thanh toán khi nhận hàng.')
+        return redirect('order_success', order_number=order.order_number)
+
+    except Order.DoesNotExist:
+        messages.error(request, 'Đơn hàng không tồn tại')
+        return redirect('checkout')
+    except Exception as e:
+        print(f"Error in process_cod_payment: {e}")
+        messages.error(request, 'Có lỗi xảy ra khi xử lý đơn hàng. Vui lòng thử lại.')
         return redirect('checkout')
 
 def order_success(request, order_number):
