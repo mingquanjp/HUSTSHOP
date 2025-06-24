@@ -5,7 +5,7 @@ from store.models import Product, Variation
 
 
 class Cart(models.Model):
-    cart_id = models.CharField(max_length=250, blank=True)
+    cart_id = models.CharField(max_length=250, blank=True,null=True)
     user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True,blank=True)
     date_added = models.DateTimeField(auto_now_add=True)
 

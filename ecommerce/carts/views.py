@@ -40,13 +40,16 @@ def add_cart(request, product_id):
             key = item
             value = request.POST.get(key)
             try:
-                variation = Variation.objects.get(
+                # Sử dụng filter().first() thay vì get() để tránh MultipleObjectsReturned
+                variation = Variation.objects.filter(
                     product=product,
                     variation_category__iexact=key,
                     variation_value__iexact=value
-                )
-                product_variations.append(variation)
-            except ObjectDoesNotExist:
+                ).first()
+
+                if variation:
+                    product_variations.append(variation)
+            except Exception:
                 pass
 
         is_exists_cart_item = CartItem.objects.filter(product=product, cart=cart).exists()
